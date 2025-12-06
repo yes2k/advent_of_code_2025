@@ -1,5 +1,13 @@
 use std::fs;
 
+fn get_overlap(r1: (u64, u64), r2: (u64, u64)) -> Option<(u64, u64)> {
+    if r1.0.max(r2.0) <= r1.1.min(r2.1) {
+        Some((r1.0.min(r2.0), r1.1.max(r2.1)))
+    } else {
+        None
+    }
+}
+
 pub fn day_5(part2: bool) -> u64 {
     let data: Vec<String> = fs::read_to_string("./puzzle_input/day_5")
         .expect("Can't read day_5 puzzle")
@@ -35,16 +43,39 @@ pub fn day_5(part2: bool) -> u64 {
             .sum();
         out
     } else {
-        let mut out: Vec<u64> = fresh_id_range
+        let mut out: Vec<(u64, u64)> = fresh_id_range
             .iter()
-            .flat_map(|x| {
+            .map(|x| {
                 let range: Vec<u64> = x.split("-").map(|z| z.parse::<u64>().unwrap()).collect();
-                range_vec
+                (range[0], range[1])
             })
             .collect();
 
-        out.sort();
-        out.dedup();
-        out.len() as u64
+        loop {
+            let mut any_overlapping = false;
+            for i in 0..out.len() {
+                for j in 0..out.len() {
+                    if i != j {
+                        if i < out.len() && j < out.len() {
+                            match get_overlap(out[i], out[j]) {
+                                Some(r) => {
+                                    out.remove(i.max(j));
+                                    out.remove(i.min(j));
+                                    out.push(r);
+                                    any_overlapping = true;
+                                }
+                                None => {}
+                            }
+                        }
+                    }
+                }
+            }
+
+            if !any_overlapping {
+                break;
+            }
+        }
+
+        out.iter().map(|x| x.1 - x.0 + 1).sum()
     }
 }
