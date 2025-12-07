@@ -22,6 +22,6 @@ fn main() {
     // println!("day 4, part 2: {:?}", day_4(true));
     // println!("day 5, part 1: {:?}", day_5(false));
     // println!("day 5, part 2: {:?}", day_5(true));
-    println!("day 6, part 1: {:?}", day_6(false));
+    // println!("day 6, part 1: {:?}", day_6(false));
     println!("day 6, part 2: {:?}", day_6(true));
 }
